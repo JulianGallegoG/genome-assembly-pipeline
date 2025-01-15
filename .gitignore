@@ -1,0 +1,24 @@
+# Nextflow specific
+.nextflow*
+work/
+results/
+.DS_Store
+
+# Environment specific
+*.swp
+.idea/
+.vscode/
+*.iml
+
+# Conda specific
+*.pyc
+__pycache__/
+
+# Test specific
+test/*
+!test/data/
+test/data/*
+!test/data/test_data.csv
+
+# Local configuration
+*local.config
