@@ -22,3 +22,7 @@ test/data/*
 
 # Local configuration
 *local.config
+
+# Process specific
+params.yml
+assembly_spec.yml

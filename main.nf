@@ -2,48 +2,59 @@
 
 nextflow.enable.dsl = 2
 
-// Pipeline parameter declarations
-params.reads = null        // Path to input reads (e.g., '*_R{1,2}.fastq.gz')
-params.outdir = 'results' // Output directory path
+// Import subworkflow
+//include { PREPROCESS_READS } from './subworkflows/local/preprocess_reads/main'
 
-// Load modules and subworkflows
-include { FASTQC } from './modules/nf-core/fastqc/main'
+// Define permitted workflow stages (similar to EBP pipeline)
+//def workflow_permitted_stages = ['preprocess']  // We can expand this later
 
-// Log pipeline info
-log.info """
-         Genome Assembly Pipeline
-         ===================================
-         input reads    : ${params.reads}
-         output dir     : ${params.outdir}
-         """
-         .stripIndent()
+def workflow_permitted_stages = ['preprocess']
 
-// Main workflow
 workflow {
-    // Input validation
-    if (!params.reads) {
-        error "Please provide input reads with --reads"
+    // Check input steps
+    def workflow_steps = params.steps.tokenize(",")
+    if (!workflow_steps.every { it in workflow_permitted_stages }) {
+        error "Unrecognised workflow step in $params.steps ( $workflow_permitted_stages )"
     }
 
-    // Create input channel for reads
-    Channel
-        .fromFilePairs(params.reads, checkIfExists: true)
-        .ifEmpty { error "Cannot find any reads matching: ${params.reads}" }
-        .set { input_reads }
+    // Print pipeline information
+    log.info """
+    HiFi READ PREPROCESSING PIPELINE
+    ===============================
+    input     : ${params.input}
+    outdir    : ${params.outdir}
+    """
+    .stripIndent()
 
-    // Quality control
-    FASTQC(input_reads)
+    // Setup sink channels
+    ch_versions = Channel.empty()
+
+    // Create channel for input YAML and validate it exists
+    input_data = Channel.fromPath(params.input)
+        .map { yaml_file ->
+            def meta = [id: yaml_file.simpleName]
+            [meta, yaml_file]
+        }
+
+    // Run preprocessing if included in steps
+    if ('preprocess' in workflow_steps) {
+        PREPROCESS_READS(input_data)
+        ch_versions = ch_versions.mix(PREPROCESS_READS.out.versions)
+    }
 }
 
-// Completion handler
+// Workflow completion handler
 workflow.onComplete {
-    log.info """
-    Pipeline execution summary
-    ---------------------------
-    Completed at : ${workflow.complete}
-    Duration    : ${workflow.duration}
-    Success     : ${workflow.success}
-    workDir     : ${workflow.workDir}
-    exit status : ${workflow.exitStatus}
-    """
+    def msg = """\
+        Pipeline execution summary
+        ---------------------------
+        Completed at: ${workflow.complete}
+        Duration    : ${workflow.duration}
+        Success     : ${workflow.success}
+        workDir     : ${workflow.workDir}
+        exit status : ${workflow.exitStatus}
+        """
+        .stripIndent()
+
+    log.info(msg)
 }
