@@ -1,0 +1,18 @@
+{
+    "editor.rulers": [100],
+    "editor.renderWhitespace": "all",
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "[nextflow]": {
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true
+    },
+    "[groovy]": {
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true
+    },
+    "files.associations": {
+        "*.nf": "nextflow",
+        "*.config": "groovy"
+    }
+}

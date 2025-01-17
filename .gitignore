@@ -1,28 +1,27 @@
-# Nextflow specific
+# Nextflow files
 .nextflow*
 work/
+
+# Pipeline files
 results/
+*_cache/
+cache/
+
+# Pixi environments
+.pixi/
+*.egg-info
+
+# nf-test files
+.nf-test.log
+.nf-test/
+
+# misc
 .DS_Store
+.screenrc
 
-# Environment specific
-*.swp
-.idea/
-.vscode/
-*.iml
+# Test data
+test/
 
-# Conda specific
-*.pyc
-__pycache__/
-
-# Test specific
-test/*
-!test/data/
-test/data/*
-!test/data/test_data.csv
-
-# Local configuration
-*local.config
-
-# Process specific
+# Run specific yml files
 params.yml
 assembly_spec.yml
