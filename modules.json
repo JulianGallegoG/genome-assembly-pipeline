@@ -20,6 +20,16 @@
             "git_sha": "666652151335353eef2fcd58880bcef5bc2928e1",
             "installed_by": ["modules"]
           },
+          "gfastats": {
+            "branch": "master",
+            "git_sha": "666652151335353eef2fcd58880bcef5bc2928e1",
+            "installed_by": ["modules"]
+          },
+          "hifiasm": {
+            "branch": "master",
+            "git_sha": "6bb8be8a75d05ee6d31205b2b97d48c7bcef60ab",
+            "installed_by": ["modules"]
+          },
           "meryl/count": {
             "branch": "master",
             "git_sha": "42140b76b12c18dbde34bfa7f2ef09afae8b054f",

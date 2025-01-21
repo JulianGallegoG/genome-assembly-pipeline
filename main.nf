@@ -6,13 +6,15 @@ nextflow.enable.dsl = 2
 include { PREPARE_INPUT } from "$projectDir/subworkflows/local/prepare_input/main"
 include { PREPROCESS_READS } from "$projectDir/subworkflows/local/preprocess_reads/main"
 include { KMER_ANALYSIS   } from "$projectDir/subworkflows/local/kmer_analysis/main"
+include { HIFIASM_ASSEMBLY } from "$projectDir/subworkflows/local/hifiasm_assembly/main"
 
 workflow {
     // Define constants
     def workflow_permitted_stages = [
         'prepare_input',
         'preprocess_reads',
-        'kmer_analysis'
+        'kmer_analysis',
+        'hifiasm_assembly'
         ]
 
      // Check input
@@ -48,6 +50,15 @@ workflow {
     if ('kmer_analysis' in workflow_steps) {
         KMER_ANALYSIS(PREPARE_INPUT.out.hifi)
         ch_versions = ch_versions.mix(KMER_ANALYSIS.out.versions)
+    }
+
+    // Run hifiasm assembly if included in steps
+    if ('hifiasm_assembly' in workflow_steps) {
+        HIFIASM_ASSEMBLY(
+            PREPARE_INPUT.out.hifi,
+            PREPARE_INPUT.out.hic
+        )
+        ch_versions = ch_versions.mix(HIFIASM_ASSEMBLY.out.versions)
     }
 }
 
